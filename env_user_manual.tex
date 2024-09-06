@@ -1,0 +1,146 @@
+\startenvironment[env_user_manual]
+\setuppapersize[A4][A4]
+\language[en]
+\mainlanguage[en]
+\setuplanguage[de][lefthyphenmin=2]
+\setuphyphenmark[sign=normal]
+\setuplayout[width=middle,height=27cm,backspace=2.5cm,topspace=1.5cm,header=1em,headerdistance=1cm,footer=1em,footerdistance=1cm]
+\setupexternalfigures[directory={graphics},location=global]
+\setuppagenumbering[location={footer,right}]
+\usepath[{typescripts}]
+\usetypescriptfile[scientific-collection]
+\usetypescript[scientific-collection]
+\setupbodyfont[scientific-collection,rm,12pt]
+\setuptyping[numbering=line,lines=no,space=normal,strip=yes,keeptogether=yes,style=\ttx]
+\setuplinenumbering[typing][style=\ttx]
+\setupcolors[state=start]
+\usecolors[crayola]
+\definecolor[AccentColor][r=0.6510,g=0.7529,b=0.2510]
+\definecolor[AccentColorDark][r=0.4745098039,g=0.4549019608,b=0.0549019608]
+
+\definedescription[detaildescription][
+    headstyle=bold, style=normal, align=flushleft, alternative=hanging, 
+    width=broad, margin=yes]
+
+\define[2]\ChapterHeadStyle{%
+  \startframed[frame=off,align=flushleft]
+  {\tfa#1\crlf}
+  {\tfd#2}
+  \stopframed}
+
+\def\PlaceAuthor#1{%
+  \noindent\setupinterlinespace[small]\color[CharcoalGray]{\tfx\it von #1}}
+
+\def\AuthorCommand{%
+  {\doifsomething 
+    {\structureuservariable{author}}
+    {\PlaceAuthor{\structureuservariable{author}}\blank[small]\nobreak}}}
+
+\setuphead[chapter][command=\ChapterHeadStyle,header=high,style=\tf,numberstyle=sc,numbercolor=AccentColorDark,insidesection=\AuthorCommand,after=\nobreak]
+\setuphead[section][style=\tfc,tolerance=tolerant,insidesection=\AuthorCommand,after=\nobreak]
+\setuphead[subsection][style=\tfb]
+\setuphead[subsubsection][style=\tfa]
+\setuphead[title][style=\tfd,command=]
+\setuphead[subject][style=\tfc]
+\setuphead[subsubject][style=\tfb]
+\setuphead[subsubsubject][style=\tfa]
+
+\setuplabeltext[de][chapter=Abschnitt~]
+\setuplabeltext[en][chapter=Section~]
+
+\setuplayouttext[header][text]
+  [righttext={\getmarking[chapter]},
+    lefttext={\ifx\equal{\expanded\getmarking[chapternumber]}{}
+      {}
+      \else
+      {\labeltext{chapter} \getmarking[chapternumber]}
+      \fi}]
+
+\setupwhitespace[medium]
+
+\setupinteraction
+  [state=start,
+    title={Theo-IDE},
+    author={Theo-IDE Development Team},
+    subtitle={User Manual},
+    keyword={code,green,development,project},
+    color=MidnightBlue,
+    contrastcolor=TealBlue]
+\setupinteractionscreen[option=bookmark]
+
+\startuniqueMPgraphic{coverpage}
+StartPage;
+  numeric w; w = PaperWidth-eps;
+  numeric h; h = PaperHeight-eps;
+  numeric line_h; line_h = 0.7h;
+  picture headline; headline := image (draw rawtextext("\framed[align=flushleft,frame=off,offset=none]{\definedfont[SansBold]Integrated Development Environment\crlf for LOOP, WHILE and GOTO}"));
+  picture subhead; subhead := image (draw rawtextext("\definedfont[Sans]User Manual"));
+  picture names; names := image(
+    draw rawtextext("\framed[align=flushright,frame=off]{\definedfont[Sans]The Theo-IDE Developers\crlf}")
+  );
+  headline := headline xsized (w - 2cm);
+  subhead := subhead xsized(0.3w);
+  names := names xsized(.3w);
+  draw headline shifted (1cm,line_h + 5mm);
+  draw subhead shifted ((1cm,line_h - 5mm) - ulcorner subhead);
+  draw names shifted (lrcorner Page - lrcorner names - (1cm, -1cm));
+  draw (0,line_h)--(w,line_h) withpen pencircle scaled 1mm withcolor \MPcolor{AccentColor};
+StopPage;
+setbounds currentpicture to Page;
+\stopuniqueMPgraphic
+
+
+
+\defineoverlay[coverpage][\uniqueMPgraphic{coverpage}]
+
+\setupTABLE[loffset=5pt,roffset=5pt,toffset=2.5pt,boffset=2.5pt]
+\setupTABLE[each][align={flushleft,lohi}]
+
+\definehighlight[Code][style=\tt]
+\definehighlight[Important][style=\it]
+\definehighlight[EnumHead][style=\bf]
+
+\definereferenceformat[infig][text=\labeltext{figure}]
+\definereferenceformat[intable][text=\labeltext{table}]
+\definereferenceformat[insection][text=\labeltext{section}]
+\definereferenceformat[inchapter][text=\labeltext{chapter}]
+
+\def\asin[#1:#2]{%
+  \expandafter\ifx\csname in#1\endcsname\relax
+    \writestatus{warning}{referenceformat in#1 not defined}%
+    \in[#1:#2]%
+  \else
+    \csname in#1\endcsname[#1:#2]%
+  \fi}
+
+\defineframedtext
+  [framedcode]
+  [strut=yes,
+   offset=5pt,
+   width=\textwidth,
+   location=middle,
+   corner=rectangular,
+   background=color,
+   backgroundcolor=CulturedPearl,
+   align=right,
+   frame=off]
+   
+\definetyping[command][numbering=none,
+                    before={\startframedcode},
+                    after={\stopframedcode}]
+
+\startbuffer[testdata]
+@Book{schoening,
+        author = {Uwe Schöning},
+        title = {Theoretische Informatik - kurz gefasst},
+        year = {2008},
+        publisher = {Spektrum Akademischer Verlag},
+}
+\stopbuffer
+
+\usebtxdataset[main][testdata.buffer]
+\usebtxdefinitions[aps]
+\setupbtx[dataset=main]
+\definebtxrendering[bibrendering][aps][dataset=main]
+
+\stopenvironment

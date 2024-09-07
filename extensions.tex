@@ -1,0 +1,505 @@
+\def\grule #1#2{
+  \bTR \bTD #1 \eTD \bTD \useMPgraphic{arrow} \eTD \bTD #2 \eTD \eTR
+}
+\startuseMPgraphic{arrow}
+drawarrow (0,0) .. (15,0)
+\stopuseMPgraphic
+\startcomponent[extensions]
+
+\startchapter[title={Language Extensions}, reference={chapter:extensions}]
+We extended the syntax of LOOP, WHILE and GOTO languages in a number of ways either to make their use
+less tedious without altering their fundamental minimalistic nature or to allow the expression
+of more complicated syntax in terms of already established functionality. The Theo-IDE accepts programs
+written in the language \Important{Theo}, which is essentially the project languages, but combined
+with the afformentioned extensions. \par
+The main extensions are the following:
+\startitemize
+\item{multi-file programs using a \quotation{copy and paste} include directive}
+\item{subroutines that can be used to represent common calculations}
+\item{a powerful macro preprocessor that can be used to introduce custom syntax}
+\stopitemize
+We will now explain the differences between the project languages and Theo in more detail
+by showing some examples. We expect that the reader is already quite familiar with the
+use of the project languages. \par
+
+\Important{Note}: In our examples we only make use of \Code{LOOP} syntax. \Code{WHILE} or \Code{GOTO}
+syntax works just like in the project languages \cite[schoening] and may be used in the same way as shown in the
+examples.
+
+\startsection[title={Quality of Life}, reference={section:qol}]
+As already mentioned, we introduced some simple quality-of-life changes that are
+designed to make the use of Theo less tedious (but not less minimalistic) than
+the project languages. \par
+As an example take a look at the following program:
+\startcommand
+x0 := 1 ;
+// this is a comment !
+_coolVariable1 := x0
+\stopcommand
+The above program uses the following non-standard extensions:
+\startitemize
+\item{constant assignment: \Code{x0 := 1}}
+\item{variable copying: \Code{_coolVariable1 := x0}}
+\item{variable names that aren't $x_n$: \Code{_coolVariable1}}
+\item{comments}
+\stopitemize
+As a result, the above program strictly speaking isn't written in the project languages, but
+\Important{is} a valid Theo program.
+\stopsection
+
+\startsection[title={Subroutines}, reference={section:subroutines}]
+Consider the following scenario: You have written a program that adds two variables together
+(a basic excercise when starting to learn the project languages). Now you want to add two
+variables together at multiple points in your program, but you don't want to copy the same
+code snippet everywhere. Theo allows the definition of samller \Important{Programs} that you can
+define in your code and execute on will. \par
+A program definition may look like this for the above scenario:
+\startcommand
+PROGRAM add IN x0, x1 OUT x0 DO
+  LOOP x1 DO
+    x0 := x0 + 1
+  END
+END
+\stopcommand
+The identifiers after the \Code{IN}-keyword are the input variables.
+The identifier listed after the \Code{OUT}-keyword is the variable
+which is used as the result of the subroutine: When execution reaches
+the \Code{END}-keyword of the program, the contents of this
+variable are copied to the caller. \par
+You may call subroutines utilizing the \Code{RUN}-keyword:
+\startcommand
+PROGRAM add IN x0, x1 OUT x0 DO
+  LOOP x1 DO x0 := x0 + 1 END
+END
+
+arg := 4 ;
+// x2 = arg + (arg + 5)
+x2 := RUN add WITH
+  arg,
+  RUN add WITH arg, 5 END
+END
+\stopcommand
+The values passed to a subroutine between \Code{WITH} and \Code{END}
+are assigned to the identifiers of the \Code{IN}-section. All identifiers
+used in a subroutine refer to values only accessible by the subroutine:
+\startcommand
+PROGRAM wrong IN x0 OUT x0 DO
+  // b = 0, because all variables are initially 0
+  b := a ;
+  // this modifies the variable 'a' local to this scope
+  a := 2
+END
+a := 1 ;
+x0 := RUN wrong WITH 0 END
+c := a
+// c = 1, as the outer a isn't modified by the program call
+\stopcommand
+In other words, you can't access variables of outer scopes, there are always
+only local variables. However you are able to call other programs as long
+as they were defined before their use. \par
+Programs are always defined at the top of your code (before the actual program starts),
+and multiple program definitions are \Important{not} separated by semicolons:
+\startcommand
+PROGRAM add IN x0, x1 OUT x0 DO
+  LOOP x1 DO x0 := x0 + 1 END
+END
+
+PROGRAM mul IN x0, x1 OUT x2 DO
+  x2 := 0 ;
+  LOOP x1 DO
+    x2 := RUN add WITH x2, x0 END
+  END
+END
+
+x1 := 4 ;
+x2 := 5 ;
+x0 := RUN mul WITH x1, x2 END
+\stopcommand
+\stopsection
+
+\startsection[title={Programs Consisting of Multiple Files}, reference={section:multifile}]
+Consider the following scenario where you have two or more files in
+your Theo project. One named \quotation{math.theo}:
+\startcommand
+PROGRAM add IN x0, x1 OUT x0 DO
+  LOOP x1 DO x0 := x0 + 1 END
+END
+\stopcommand
+And another one, which is the main file of your program:
+\startcommand
+INCLUDE \"math.theo\"
+x1 := 2 ; x2 := 3 ;
+x0 := RUN add WITH x1, x2 END
+\stopcommand
+
+At the start of processing, the Theo compiler will insert the contents
+of \quotation{math.theo} at the position where it is included. As a
+consequence of this, you need to respect semicolon rules across file
+boundaries (possibly requiring a semicolon at the end of a file or after
+an include statement) and cyclic dependencies are strictly disallowed.
+We recommend using the include functionality like in the example to
+outsource program definitions. \par
+
+Include statements may appear at any position in the source code.
+\stopsection
+
+\startsection[title={Macro Preprocessor}, reference={section:macros}]
+Whilst subroutines endow the user with considerable power, they
+are still limited. The compiler used in the Theo-IDE comes with a
+powerful preprocessor with which you can define macro patterns
+and replacements for levying a higher level of syntactic modification.
+\par
+
+Let's look at a simple example of macro usage. In the examples leading
+up to this point, we have almost always defined a subroutine \Code{add},
+which performs addition. We have then utilized this subroutine by writing
+\Code{RUN add WITH value1, value2}, which is fine, but actually
+writing something like \Code{value1 + value2} would have been way nicer.
+\par
+
+The following example demonstrates how to translate code snippets of the
+form \Code{value1 + value2} to the more verbose subroutine call:
+\startcommand
+PROGRAM add IN x0, x1 OUT x0 DO
+  LOOP x1 DO x0 := x0 + 1 END
+END
+
+DEFINE
+  // we look for patterns of "value1 + value2"
+  <VALUE> + <VALUE>
+AS
+  // and replace with this
+  // ($0 is the contents of the first <VALUE>, $1 of the second)
+  RUN add WITH $0, $1 END
+END DEFINE
+
+x0 := 5 ; x1 := 4 ;
+// gets translated to RUN add WTIH x0, x1 END
+x2 := x0 + x1 
+\stopcommand
+Macro definitions always start with \Code{DEFINE} and end with \Code{END DEFINE}.
+Between these keywords, seperated by \Code{AS}, you will first find
+the macro pattern that will be replaced and then the string that any
+occurence of the pattern will be replaced with. \par
+
+In the macro pattern definition, you may use special \Important{matcher tokens} which
+don't match any token in particular, but a pre-defined class of tokens or strings of
+tokens. The available matcher tokens are:
+\startitemize
+\item{\Code{<VALUE>}, which includes any identifier (variable name), constant or subroutine call}
+\item{\Code{<ID>}, which matches any identifier}
+\item{\Code{<INT>}, which matches any constant}
+\item{\Code{<ARGS>}, which matches comma-separated identifiers (such as \Code{x0, x1, x2})}
+\item{\Code{<PROGRAM>}, which matches entire semicolon-separated program blocks
+  (such as \Code{x0 := 1 ; x1 := x0 + 1}), which includes any program
+  according to the syntax rules of the project languages}
+\stopitemize
+
+With the powerful \Code{<PROGRAM>} matcher, you can for example
+solve the common excercise of defining a \quotation{IF-THEN-ELSE}
+statement whilst only using \Code{LOOP}:
+\startcommand
+DEFINE
+  IF <VALUE> THEN <PROGRAM> ELSE <PROGRAM> END
+AS
+  #0 := $0 ;
+  #1 := 0 ;
+  #2 := 1 ;
+  LOOP #0 DO
+    #1 := 1 ;
+    #2 := 0
+  END ;
+  LOOP #1 DO $1 END ;
+  LOOP #2 DO $2 END
+END DEFINE
+
+x0 := 1 ;
+IF x0 THEN
+  x2 := 1
+ELSE
+  x2 := 2
+END
+\stopcommand
+
+In the above example we made use of scratch variables
+(variables that serve as temporary storage for a macro),
+which are variables of the form \Code{\#n}, where n is any
+natural number including zero.  \par
+
+If you have multiple macro definitions, and want to
+influence the order of replacement (which can matter
+in some instances), you can define a \Important{replacement
+  priority}:
+\startcommand
+... definitions of programs add and mul ...
+DEFINE PRIO 10
+  <VALUE> + <VALUE>
+AS
+  RUN add WITH $0, $1 END
+END DEFINE
+
+DEFINE PRIO 20
+  <VALUE> * <VALUE>
+AS
+  RUN mul WITH $0, $1 END
+END DEFINE
+\stopcommand
+If at any point multiple macros could be replaced
+in the input, definitions with higher priority
+will always be replaced before definitions with
+lower priority. \par
+
+In general, macros are replaced according to the
+following schema: Replace the macro definition
+with the highest priority, which was detected
+at the topmost, leftmost position with the longest sequence
+of tokens matched against it. Repeat this replacement
+until nothing changes or an upper limit of allowed
+replacements has been reached (this upper limit is
+hard-coded in order to avoid infinite replacing
+loops). \par
+
+Macro definitions, just like \Code{include} directives, may
+appear at any point in the source code and are \quotation{
+  filtered out} at an early compilation step.
+
+\stopsection
+
+\startsection[title={Formal Summary}, reference={section:grammar}]
+This section is intended only for completeness (and not for learning).
+We will define a set of non-terminal symbols and grammars for
+syntactically correct include directives, macro definitions and
+transformed programs, which the informed reader may use to their
+benefit.
+
+\startsubsection[title={Non-Terminals}, reference={section:terms}]
+\asin[table:tokens] lists all non-terminal symbols that the formal
+grammars will use.
+\startplacetable[title={Non-Terminal Symbols of Theo}, reference={table:tokens}, location=split]
+\bTABLE[split=repeat]
+  \setupTABLE[c][1][aligh=flushleft,style=\bold]
+  \setupTABLE[c][2][style=\Code]
+  \setupTABLE[c][3][align=flushleft]
+  \setupTABLE[row][first][align={flushleft,lohi}]
+\bTABLEhead
+  \bTR
+    \bTH Name \eTH 
+    \bTH Regular Expression (FLEX)\eTH 
+    \bTH Note \eTH 
+  \eTR
+\eTABLEhead
+\bTABLEnext
+  \bTR
+    \bTH Name \eTH 
+    \bTH Regular Expression (FLEX)\eTH 
+    \bTH Note \eTH 
+  \eTR
+\eTABLEnext
+\bTABLEbody  
+  \bTR 
+    \bTD id \eTD 
+    \bTD \[a-zA-Z\_\]\[a-zA-Z0-9\_\]* \eTD 
+    \bTD identifiers, variable names, program names \eTD 
+  \eTR
+  \bTR
+    \bTD int \eTD
+    \bTD (0\|(\[1-9\]\[0-9\]*)) \eTD
+    \bTD constants \eTD
+  \eTR
+  \bTR
+  \bTD file \eTD \bTD \letterbackslash\letterdoublequote\[\letterhat\letterbackslash\letterdoublequote\]*\letterbackslash\letterdoublequote \eTD \bTD file names \eTD
+  \eTR
+  \bTR
+  \bTD insert \eTD \bTD \$\{\bold{int}\} \eTD \bTD matcher insertion point \eTD
+  \eTR
+  \bTR
+  \bTD local \eTD \bTD \#\{\bold{int}\} \eTD \bTD macro scratch varialbe \eTD
+  \eTR
+  \bTR
+  \bTD ws \eTD \bTD \[ \letterbackslash t\letterbackslash n\]+ \eTD \bTD whitespace, removed before grammar application \eTD
+  \eTR
+  \bTR
+  \bTD comment \eTD \bTD \letterbackslash/\letterbackslash/.* \eTD \bTD comments, removed before grammar application \eTD
+  \eTR
+  \bTR
+  \bTD , \eTD \bTD \letterbackslash , \eTD \bTD program argument separator \eTD
+  \eTR
+  \bTR
+  \bTD ; \eTD \bTD \letterbackslash ; \eTD \bTD program statement separator \eTD
+  \eTR
+  \bTR
+  \bTD : \eTD \bTD \letterbackslash : \eTD \bTD label declarator \eTD
+  \eTR
+  \bTR
+  \bTD := \eTD \bTD \letterbackslash :\letterbackslash = \eTD \bTD assignment operator \eTD
+  \eTR
+  \bTR
+  \bTD != 0 \eTD \bTD != 0 \eTD \bTD unequal zero operator \eTD
+  \eTR
+  \bTR
+  \bTD = \eTD \bTD = \eTD \bTD equality operator \eTD
+  \eTR
+  \bTR
+  \bTD run \eTD \bTD RUN\|run\|Run \eTD 
+  \eTR
+  \bTR
+  \bTD with \eTD \bTD WITH\|with\|With \eTD
+  \eTR
+  \bTR
+  \bTD do \eTD \bTD DO\|do\|Do \eTD 
+  \eTR
+  \bTR
+  \bTD loop \eTD \bTD LOOP\|loop\|Loop \eTD
+  \eTR
+  \bTR
+  \bTD while \eTD \bTD WHILE\|while\|While \eTD
+  \eTR
+  \bTR
+  \bTD goto \eTD \bTD GOTO\|goto\|Goto \eTD
+  \eTR
+  \bTR
+  \bTD if \eTD \bTD IF\|if\|If \eTD
+  \eTR
+  \bTR
+  \bTD then \eTD \bTD THEN\|then\|Then \eTD
+  \eTR
+  \bTR
+  \bTD stop \eTD \bTD STOP\|stop\|Stop \eTD
+  \eTR
+  \bTR
+  \bTD end \eTD \bTD END\|end\|End \eTD
+  \eTR
+  \bTR
+  \bTD program \eTD \bTD PROGRAM\|program\|Program\|\\PROG\|prog\|Prog \eTD
+  \eTR
+  \bTR
+  \bTD in \eTD \bTD IN\|in\|In \eTD
+  \eTR
+  \bTR
+  \bTD out \eTD \bTD OUT\|out\|Out \eTD
+  \eTR
+  \bTR
+  \bTD include \eTD \bTD INCLUDE\|include\|Include \eTD
+  \eTR
+  \bTR
+  \bTD define \eTD \bTD DEFINE\|define\|Define\|\\DEF\|def\|Def \eTD
+  \eTR
+  \bTR
+  \bTD as \eTD \bTD AS\|as\|As \eTD
+  \eTR
+  \bTR
+  \bTD priority \eTD \bTD PRIORITY\|priority\|Priority\|\\PRIO\|prio\|Prio \eTD
+  \eTR
+  \bTR
+  \bTD enddefine \eTD \bTD END DEFINE\|end define\|\\End Define\|ENDDEF\|\\Enddef\|enddef \eTD
+  \eTR
+  \bTR
+  \bTD <program> \eTD \bTD <PROGRAM>\|<program>\|\\<Program>\|<PROG>\|\\<prog>\|<Prog>\|<P>\|<p> \eTD \bTD macro program matcher \eTD
+  \eTR
+  \bTR
+  \bTD <args> \eTD \bTD <ARGS>\|<args>\|<Args>\|<A>\|<a> \eTD \bTD macro argument chain matcher \eTD
+  \eTR
+  \bTR
+  \bTD <value> \eTD \bTD <VALUE>\|<value>\|<Value>\|\\<VAL>\|<val>\|<Val>\|<V>\|<v> \eTD \bTD macro value matcher \eTD
+  \eTR
+  \bTR
+  \bTD <int> \eTD \bTD <INT>\|<int>\|<Int> \eTD \bTD macro constant separator \eTD
+  \eTR
+  \bTR
+  \bTD <id> \eTD \bTD <ID>\|<id> \eTD \bTD macro identifier matcher \eTD
+  \eTR
+  \bTR
+  \bTD separator \eTD \bTD . \eTD \bTD any other sequence of characters (may be used for delimiters in macros, when you do not want \Code{<VALUE>} to treat it as an identifier  \eTD
+  \eTR
+\eTABLEbody
+\eTABLE
+\stopplacetable
+\stopsubsection
+
+\startsubsection[title={Include Directives}, reference={section:include-directives}]
+\Code{include} statements are filtered out of the import at the first step of compilation.
+Include directives start with \bold{include} and must be followed by \bold{file}.
+\stopsubsection
+
+\startsubsection[title={Macro Definitions}, reference={section:macro-defs}]
+At the next step, macro definitions are extracted from the remaining input. The grammar in
+\asin[fig:preproc-grammar], with starting symbol S, produces valid macro definitions. 
+
+\startplacefigure[title={Grammar for macro definitions}, reference={fig:preproc-grammar}]
+\bTABLE
+\setupTABLE[row][each][topframe=off, bottomframe=off, leftframe=off, rightframe=off]
+\bTR
+\bTD S \eTD
+\bTD \useMPgraphic{arrow} \eTD
+\bTD \epsilon\space\| A S \| M S \eTD
+\eTR
+\bTR
+\bTD A \eTD
+\bTD \useMPgraphic{arrow} \eTD
+\bTD \Important{any terminal symbol which is not \bold{define}, \bold{as}, \bold{enddefine}, \bold{insert}, \bold{local}, \bold{<program>}, \bold{<args>}, \bold{<id>}, \bold{<int>} or \bold{<value>}} \eTD
+\eTR
+\bTR
+\bTD M \eTD
+\bTD \useMPgraphic{arrow} \eTD
+\bTD \bold{define} P D \bold{as} R \bold{enddefine} \eTD
+\eTR
+\bTR
+\bTD P \eTD
+\bTD \useMPgraphic{arrow} \eTD
+\bTD \epsilon\space\| \bold{priority} \bold{int} \eTD
+\eTR
+\bTR
+\bTD D \eTD
+\bTD \useMPgraphic{arrow} \eTD
+\bTD B \| B D \eTD
+\eTR
+\bTR
+\bTD B \eTD
+\bTD \useMPgraphic{arrow} \eTD
+\bTD A \| \bold{<program>} \| \bold{<args>} \| \bold{<value>} \| \bold{<int>} \| \bold{<id>} \eTD
+\eTR
+\bTR
+\bTD R \eTD
+\bTD \useMPgraphic{arrow} \eTD
+\bTD \epsilon\space\| C R \eTD
+\eTR
+\bTR
+\bTD C \eTD
+\bTD \useMPgraphic{arrow} \eTD
+\bTD A \| \bold{local} \| \bold{insert}\eTD
+\eTR
+\eTABLE
+\stopplacefigure
+\stopsubsection
+
+\startsubsection[title={Theo}, reference={section:theo}]
+After the preprocessor is applied to the remaining input, the grammar
+in \asin[fig:parser-grammar] is used to verify syntactic correctness.
+\startplacefigure[title={Grammar of Theo}, reference={fig:parser-grammar}, width=\textwidth]
+\setupTABLE[row][each][topframe=off, bottomframe=off, leftframe=off, rightframe=off]
+\bTABLE
+\grule{S}{def S \| P}
+\grule{def}{\bold{program} \bold{id} input output \bold{do} P \bold{end}}
+\grule{input}{\bold{in} L}
+\grule{L}{\bold{id} \| L \bold{,} L}
+\grule{output}{\epsilon\space\| \bold{out} \bold{id}}
+\grule{P}{P \bold{;} P}
+\grule{P}{A}
+\grule{P}{\bold{id :} A}
+\grule{A}{\bold{id := V}}
+\grule{A}{\bold{loop id do} P \bold{end}}
+\grule{A}{\bold{while id != 0 do} P \bold{end}}
+\grule{A}{\bold{goto id} \| \bold{stop}}
+\grule{A}{\bold{if id = int then goto id}}
+\grule{V}{\bold{id} \| \bold{int} \| C}
+\grule{C}{\bold{run id with} args \bold{end}}
+\grule{args}{V \| args \bold{,} args}
+\eTABLE
+\stopplacefigure
+\stopsubsection
+
+\stopsection
+
+\stopchapter
+
+\stopcomponent

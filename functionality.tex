@@ -1,0 +1,91 @@
+\startcomponent[functionality]
+
+\startchapter[title={Basic Functionality}, reference={chapter:functionality}]
+Once the Theo-IDE application is opened, you will be greeted with the user interface
+as pictured in \asin[fig:ui]. Depending on the window width of your platform,
+the sidebar may be located at the bottom, and some of the buttons in the primary
+action bar at the top may be hidden in drop-down menus. We will now proceed with
+an explanation of the functionality of the Theo-IDE.
+
+\startplacefigure[title={User Interface of Theo-IDE}, reference={fig:ui}]
+\externalfigure[resources/theoide.png][width=\textwidth]
+\stopplacefigure
+
+The action bar at the top (which also contains the \quotation{Theo-IDE} label) is
+refereed to as the \Important{primary action bar}. Below the primary action bar
+the view is split into the \Important{editor} (on the left side in \asin[fig:ui])
+and the \Important{sidebar}. The sidebar further is segmented into the
+\Important{secondary action bar} at its top and the \Important{control area} below it.
+
+\startsection[title={Creating, Opening and Saving Files}, reference={section:creating}]
+You may create new program files by clicking on the button with the plus icon
+in the primary action bar (the leftmost button in \asin[fig:ui]). In situations
+where the window is narrow, this button may be hidden in a drop-down menu, which
+is accessible from the primary action bar. \par
+Upon clicking this button, a new editor tab named \Important{Temporary-*} will open,
+and you'll be able to enter your source code.\par
+You may load source code from files contained in your file system by clicking on the button
+with the file icon in the primary action bar (next to the creating button in \asin[fig:ui]).
+In narrow windows, this button is hidden in the same drop-down menu as the opening button.\par
+Upon clicking this button, a file dialog will open, prompting you for the files you wish
+to load. After confirming your selection of files, one editor tab will open for each
+of the files you opened, where the name of the tab is the file name in your file system.\par
+Analogously to opening files, you may save modified or created files by clicking on the button
+with the save icon (to the right of the opening button in \asin[fig:ui]). \par
+This action will save whatever file is currently selected in the editor.
+\stopsection
+
+\startsection[title={Running Programs}, reference={section:running}]
+Running programs is a two-step process: First you select the main file of your program
+in the control area by selecting the name of the editor tab that contains it from the
+drop-down menu labeled \Important{Main Script}. Secondly, in the primary action bar,
+you click on the button with the triangular icon. \par
+
+This action will first compile your program. If any errors occur during compilation you
+will be shown a message dialog notifying you of the incident. If no errors occur, your
+program will be executed. When execution finishes successfully, a table showing the final
+variable contents will appear in the control area under the label \Important{Output}.
+Should your program not halt for any reason, you may use the stop button in the secondary
+action bar (the one with the square iconography), to forcefully halt your program.
+\stopsection
+
+\startsection[title={Debugging Programs}, reference={section:debugging}]
+If you want to step through your program line-by-line or have the program halt on
+predefined breakpoints, you will want to make use of Theo-IDEs debugging
+capabilities.\par
+At first, you will follow exactly the same process as when running a program, except
+that after selecting your main file, you will click on the debugging button (next to
+the run button in \asin[fig:ui], with the insect icon).\par
+At this point, your program will once again be compiled, and any errors will be reported
+with a message dialog. But the program \Important{won't} be executed straight away, and
+you will be able to make use of the buttons in the secondary action bar to influence
+execution:
+\startitemize
+\item{
+  the leftmost button in \asin[fig:ui] will execute the program until a breakpoint is encountered
+  or the program ends (whichever happens first)
+}
+\item{
+  the second button from the left in \asin[fig:ui] will execute one line of code
+}
+\item{
+  the third button from the left in \asin[fig:ui] toggles auto-stepping mode: When enabled, Theo-IDE
+  will automatically execute lines of code with a delay inbetween, the length of which is altered
+  with the slider titled \Important{Auto Step Speed} in the control area
+}
+\item{
+  the fourth button from the left in \asin[fig:ui] resets execution to the beginning of the program
+}
+\item{
+  the fifth button from the left in \asin[fig:ui] stops execution
+}
+\stopitemize
+You may activate or deactivate breakpoints by clicking on the line number in the editor at the location
+where you want the program to pause. During execution, the output table in the control area will always
+show the current variable states.
+
+\stopsection
+
+\stopchapter
+
+\stopcomponent

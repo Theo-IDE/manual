@@ -1,11 +1,12 @@
 \environment[env_user_manual]
-\version[temporary]
+\doifmodeelse{production}{\version[final]}{\version[temporary]}
 
 \startproduct[prd_user_manual]
 \startdocument
-  [author={TheoIDE Development Team},
-  title={Integrated Development Environment for LOOP, WHILE and GOTO},
-  subtitle={User Manual}]
+  [metadata:author={Theo-IDE Development Team},
+  metadata:title={Integrated Development Environment for LOOP, WHILE and GOTO},
+  metadata:subject={User Manual},
+  metadata:keywords={Theo-IDE,Manual,LOOP,WHILE,GOTO,IDE,Concept Languages,Schöning}]
 
 \component[titlepage]
 

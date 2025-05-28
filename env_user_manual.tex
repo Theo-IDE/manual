@@ -17,6 +17,7 @@
 \usecolors[crayola]
 \definecolor[AccentColor][r=0.6510,g=0.7529,b=0.2510]
 \definecolor[AccentColorDark][r=0.4745098039,g=0.4549019608,b=0.0549019608]
+\setbreakpoints[compound]
 
 \definedescription[detaildescription][
     headstyle=bold, style=normal, align=flushleft, alternative=hanging, 
@@ -45,8 +46,10 @@
 \setuphead[subsubject][style=\tfb]
 \setuphead[subsubsubject][style=\tfa]
 
-\setuplabeltext[de][chapter=Abschnitt~]
-\setuplabeltext[en][chapter=Section~]
+\setuplabeltext[de][chapter=Kapitel~]
+\setuplabeltext[en][chapter=Chapter~]
+\setuplabeltext[de][section=Abschnitt~]
+\setuplabeltext[en][section=Section~]
 
 \setuplayouttext[header][text]
   [righttext={\getmarking[chapter]},
@@ -60,10 +63,6 @@
 
 \setupinteraction
   [state=start,
-    title={Theo-IDE},
-    author={Theo-IDE Development Team},
-    subtitle={User Manual},
-    keyword={code,green,development,project},
     color=MidnightBlue,
     contrastcolor=TealBlue]
 \setupinteractionscreen[option=bookmark]

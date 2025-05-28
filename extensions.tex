@@ -1,10 +1,6 @@
-\def\grule #1#2{
-  \bTR \bTD #1 \eTD \bTD \useMPgraphic{arrow} \eTD \bTD #2 \eTD \eTR
-}
-\startuseMPgraphic{arrow}
-drawarrow (0,0) .. (15,0)
-\stopuseMPgraphic
 \startcomponent[extensions]
+\def\grule#1#2{%
+  \bTR \bTD #1 \eTD \bTD \rightarrow \eTD \bTD #2 \eTD \eTR}
 
 \startchapter[title={Language Extensions}, reference={chapter:extensions}]
 We extended the syntax of LOOP, WHILE and GOTO languages in a number of ways either to make their use
@@ -224,7 +220,7 @@ END
 In the above example we made use of scratch variables
 (variables that serve as temporary storage for a macro),
 which are variables of the form \Code{\#n}, where n is any
-natural number including zero.  \par
+natural number including zero.
 
 If you have multiple macro definitions, and want to
 influence the order of replacement (which can matter
@@ -247,7 +243,7 @@ END DEFINE
 If at any point multiple macros could be replaced
 in the input, definitions with higher priority
 will always be replaced before definitions with
-lower priority. \par
+lower priority.
 
 In general, macros are replaced according to the
 following schema: Replace the macro definition
@@ -257,7 +253,7 @@ of tokens matched against it. Repeat this replacement
 until nothing changes or an upper limit of allowed
 replacements has been reached (this upper limit is
 hard-coded in order to avoid infinite replacing
-loops). \par
+loops).
 
 Macro definitions, just like \Code{include} directives, may
 appear at any point in the source code and are \quotation{
@@ -428,44 +424,45 @@ At the next step, macro definitions are extracted from the remaining input. The 
 \startplacefigure[title={Grammar for macro definitions}, reference={fig:preproc-grammar}]
 \bTABLE
 \setupTABLE[row][each][topframe=off, bottomframe=off, leftframe=off, rightframe=off]
+\setupTABLE[column][2][mode=math]
 \bTR
 \bTD S \eTD
-\bTD \useMPgraphic{arrow} \eTD
+\bTD \rightarrow \eTD
 \bTD \epsilon\space\| A S \| M S \eTD
 \eTR
 \bTR
 \bTD A \eTD
-\bTD \useMPgraphic{arrow} \eTD
+\bTD \rightarrow \eTD
 \bTD \Important{any terminal symbol which is not \bold{define}, \bold{as}, \bold{enddefine}, \bold{insert}, \bold{local}, \bold{<program>}, \bold{<args>}, \bold{<id>}, \bold{<int>} or \bold{<value>}} \eTD
 \eTR
 \bTR
 \bTD M \eTD
-\bTD \useMPgraphic{arrow} \eTD
+\bTD \rightarrow \eTD
 \bTD \bold{define} P D \bold{as} R \bold{enddefine} \eTD
 \eTR
 \bTR
 \bTD P \eTD
-\bTD \useMPgraphic{arrow} \eTD
+\bTD \rightarrow \eTD
 \bTD \epsilon\space\| \bold{priority} \bold{int} \eTD
 \eTR
 \bTR
 \bTD D \eTD
-\bTD \useMPgraphic{arrow} \eTD
+\bTD \rightarrow \eTD
 \bTD B \| B D \eTD
 \eTR
 \bTR
 \bTD B \eTD
-\bTD \useMPgraphic{arrow} \eTD
+\bTD \rightarrow \eTD
 \bTD A \| \bold{<program>} \| \bold{<args>} \| \bold{<value>} \| \bold{<int>} \| \bold{<id>} \eTD
 \eTR
 \bTR
 \bTD R \eTD
-\bTD \useMPgraphic{arrow} \eTD
+\bTD \rightarrow \eTD
 \bTD \epsilon\space\| C R \eTD
 \eTR
 \bTR
 \bTD C \eTD
-\bTD \useMPgraphic{arrow} \eTD
+\bTD \rightarrow \eTD
 \bTD A \| \bold{local} \| \bold{insert}\eTD
 \eTR
 \eTABLE
@@ -475,9 +472,10 @@ At the next step, macro definitions are extracted from the remaining input. The 
 \startsubsection[title={Theo}, reference={section:theo}]
 After the preprocessor is applied to the remaining input, the grammar
 in \asin[fig:parser-grammar] is used to verify syntactic correctness.
-\startplacefigure[title={Grammar of Theo}, reference={fig:parser-grammar}, width=\textwidth]
-\setupTABLE[row][each][topframe=off, bottomframe=off, leftframe=off, rightframe=off]
+\startplacefigure[title={Grammar of Theo}, reference={fig:parser-grammar}]
 \bTABLE
+\setupTABLE[row][each][topframe=off, bottomframe=off, leftframe=off, rightframe=off]
+\setupTABLE[column][2][mode=math]
 \grule{S}{def S \| P}
 \grule{def}{\bold{program} \bold{id} input output \bold{do} P \bold{end}}
 \grule{input}{\bold{in} L}

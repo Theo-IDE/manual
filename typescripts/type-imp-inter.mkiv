@@ -1,0 +1,76 @@
+\starttypescriptcollection[inter]
+
+\definefontfeature[inter-preset][default][kern=yes,liga=yes,lnum=yes,calt=yes,case=yes,rlig=yes,ss03=yes,cpsp=yes]
+\definefontfeature[inter-black]      [inter-preset] [axis={wght=900}]
+\definefontfeature[inter-extrabold]  [inter-preset] [axis={wght=800}]
+\definefontfeature[inter-bold]       [inter-preset] [axis={wght=700}]
+\definefontfeature[inter-semibold]   [inter-preset] [axis={wght=600}]
+\definefontfeature[inter-medium]     [inter-preset] [axis={wght=500}]
+\definefontfeature[inter-regular]    [inter-preset] [axis={wght=400}]
+\definefontfeature[inter-light]      [inter-preset] [axis={wght=300}]
+\definefontfeature[inter-extralight] [inter-preset] [axis={wght=200}]
+\definefontfeature[inter-thin]       [inter-preset] [axis={wght=100}]
+
+\starttypescript [sans] [inter]
+  \definefontsynonym [Inter-Black] [name:intervariable] [features={inter-black}]
+  \definefontsynonym [Inter-BlackItalic] [name:intervariableitalic] [features={inter-black}]
+  \definefontsynonym [Inter-Bold] [name:intervariable] [features={inter-bold}]
+  \definefontsynonym [Inter-BoldItalic] [name:intervariableitalic] [features={inter-bold}]
+  \definefontsynonym [Inter-ExtraBold] [name:intervariable] [features={inter-extrabold}]
+  \definefontsynonym [Inter-ExtraBoldItalic] [name:intervariableitalic] [features={inter-extrabold}]
+  \definefontsynonym [Inter-ExtraLight] [name:intervariable] [features={inter-extralight}]
+  \definefontsynonym [Inter-ExtraLightItalic] [name:intervariableitalic] [features={inter-extralight}]
+  \definefontsynonym [Inter-Italic] [name:intervariableitalic] [features={inter-regular}]
+  \definefontsynonym [Inter-Light] [name:intervariable] [features={inter-light}]
+  \definefontsynonym [Inter-LightItalic] [name:intervariableitalic] [features={inter-light}]
+  \definefontsynonym [Inter-Medium] [name:intervariable] [features={inter-medium}]
+  \definefontsynonym [Inter-MediumItalic] [name:intervariableitalic] [features={inter-medium}]
+  \definefontsynonym [Inter-ThinItalic] [name:intervariableitalic] [features={inter-thin}]
+  \definefontsynonym [Inter-Regular] [name:intervariable] [features={inter-regular}]
+  \definefontsynonym [Inter-SemiBold] [name:intervariable] [features={inter-semibold}]
+  \definefontsynonym [Inter-SemiBoldItalic] [name:intervariableitalic] [features={inter-semibold}]
+  \definefontsynonym [Inter-Thin] [name:intervariable] [features={inter-thin}]
+  \definefontsynonym [Inter-ThinItalic] [name:intervariableitalic] [features={inter-thin}]
+\stoptypescript
+
+
+\starttypescript [sans] [inter]
+  \definefontsynonym [Sans]             [Inter-Regular] [features=default]
+  \definefontsynonym [SansBold]         [Inter-Bold] 
+  \definefontsynonym [SansItalic]       [Inter-Italic]
+  \definefontsynonym [SansBoldItalic]   [Inter-BoldItalic]
+\stoptypescript
+
+\starttypescript [sans] [inter-semibold]
+  \setups[font:fallback:sans]
+  \definefontsynonym [Sans] [Inter-SemiBold]
+  \definefontsynonym [SansItalic] [Inter-SemiBoldItalic]
+\stoptypescript
+
+\starttypescript [sans] [inter-black]
+  \setups[font:fallback:sans]
+  \definefontsynonym[Sans][Inter-Black]
+  \definefontsynonym[SansItalic][Inter-BlackItalic]
+\stoptypescript
+
+\starttypescript [sans] [inter-light]
+  \setups[font:fallback:sans]
+  \definefontsynonym[Sans][Inter-Light]
+  \definefontsynonym[SansItalic][Inter-LightItalic]
+  \definefontsynonym[SansBold][Inter-SemiBold]
+  \definefontsynonym[SansBoldItalic][Inter-SemiBoldItalic]
+\stoptypescript
+
+\starttypescript [sans] [inter-thin]
+  \setups[font:fallback:sans]
+  \definefontsynonym[Sans][Inter-Thin]
+  \definefontsynonym[SansItalic][Inter-ThinItalic]
+  \definefontsynonym[SansBold][Inter-Regular]
+  \definefontsynonym[SansBoldItalic][Inter-Italic]
+\stoptypescript
+
+\starttypescript [inter]
+  \definetypeface[\typescriptone][ss][sans][inter][default]
+\stoptypescript
+
+\stoptypescriptcollection

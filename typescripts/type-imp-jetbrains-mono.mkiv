@@ -1,0 +1,59 @@
+\starttypescriptcollection[jetbrains-mono]
+
+\definefontfeature[jetbrains-mono-preset] [default] [liga=yes,kern=yes]
+
+\starttypescript [mono] [jetbrains-mono-nl]
+  \definefontsynonym [JetBrainsMonoNL-Regular] [name:jetbrainsmononlregular]
+  \definefontsynonym [JetBrainsMonoNL-Bold] [name:jetbrainsmononlbold]
+  \definefontsynonym [JetBrainsMonoNL-BoldItalic] [name:jetbrainsmononlbolditalic]
+  \definefontsynonym [JetBrainsMonoNL-ExtraBold] [name:jetbrainsmononlextrabold]
+  \definefontsynonym [JetBrainsMonoNL-ExtraBoldItalic] [name:jetbrainsmononlextrabolditalic]
+  \definefontsynonym [JetBrainsMonoNL-ExtraLight] [name:jetbrainsmononlextralight]
+  \definefontsynonym [JetBrainsMonoNL-ExtraLightItalic] [name:jetbrainsmononlextralightitalic]
+  \definefontsynonym [JetBrainsMonoNL-Italic] [name:jetbrainsmononlitalic]
+  \definefontsynonym [JetBrainsMonoNL-Light] [name:jetbrainsmononllight]
+  \definefontsynonym [JetBrainsMonoNL-LightItalic] [name:jetbrainsmononllightitalic]
+  \definefontsynonym [JetBrainsMonoNL-Medium] [name:jetbrainsmononlmedium]
+  \definefontsynonym [JetBrainsMonoNL-MediumItalic] [name:jetbrainsmononlmediumitalic]
+  \definefontsynonym [JetBrainsMonoNL-ThinItalic] [name:jetbrainsmononlthinitalic]
+\stoptypescript
+
+\starttypescript [mono] [jetbrains-mono]
+  \definefontsynonym [JetBrainsMono-ExtraLight] [name:jetbrainsmonoextralight]
+  \definefontsynonym [JetBrainsMono-ExtraLightItalic] [name:jetbrainsmonoextralightitalic]
+  \definefontsynonym [JetBrainsMono-Light] [name:jetbrainsmonolight]
+  \definefontsynonym [JetBrainsMono-LightItalic] [name:jetbrainsmonolightitalic]
+  \definefontsynonym [JetBrainsMono-ThinItalic] [name:jetbrainsmonothinitalic]
+  \definefontsynonym [JetBrainsMono-Thin] [name:jetbrainsmonothin]
+  \definefontsynonym [JetBrainsMono-Regular] [name:jetbrainsmonoregular]
+  \definefontsynonym [JetBrainsMono-Italic] [name:jetbrainsmonoitalic]
+  \definefontsynonym [JetBrainsMono-Medium] [name:jetbrainsmonomedium]
+  \definefontsynonym [JetBrainsMono-MediumItalic] [name:jetbrainsmonomediumitalic]
+  \definefontsynonym [JetBrainsMono-Bold] [name:jetbrainsmonobold]
+  \definefontsynonym [JetBrainsMono-BoldItalic] [name:jetbrainsmonobolditalic]
+  \definefontsynonym [JetBrainsMono-ExtraBold] [name:jetbrainsmonoextrabold]
+  \definefontsynonym [JetBrainsMono-ExtraBoldItalic] [name:jetbrainsmonoextrabolditalic]
+\stoptypescript
+
+
+\starttypescript [mono] [jetbrains-mono]
+  \setups[font:fallback:mono]
+  \definefontsynonym [Mono]             [JetBrainsMono-Regular]    [features=jetbrains-mono-preset]
+  \definefontsynonym [MonoBold]         [JetBrainsMono-Bold]       [features=jetbrains-mono-preset]
+  \definefontsynonym [MonoItalic]       [JetBrainsMono-Italic]     [features=jetbrains-mono-preset]
+  \definefontsynonym [MonoBoldItalic]   [JetBrainsMono-BoldItalic] [features=jetbrains-mono-preset]
+\stoptypescript
+
+\starttypescript [mono] [jetbrains-mono-nl]
+  \setups[font:fallback:mono]
+  \definefontsynonym [Mono]             [JetBrainsMonoNL-Regular]     [features=auto]
+  \definefontsynonym [MonoBold]         [JetBrainsMonoNL-Bold]        [features=auto]
+  \definefontsynonym [MonoItalic]       [JetBrainsMonoNL-Italic]      [features=auto]
+  \definefontsynonym [MonoBoldItalic ]  [JetBrainsMonoNL-BoldItalic]  [features=auto]
+\stoptypescript
+
+\starttypescript [jetbrains-mono]
+  \definetypeface [jetbrains-mono] [tt] [mono] [jetbrains-mono] [default]
+\stoptypescript
+
+\stoptypescriptcollection

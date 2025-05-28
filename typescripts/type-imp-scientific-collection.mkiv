@@ -1,0 +1,18 @@
+%&context
+
+\usetypescriptfile [jetbrains-mono]
+\usetypescriptfile [inter]
+\usetypescriptfile [stix]
+\enabletrackers[fonts.missing]
+
+\starttypescriptcollection[scientific-collection]
+\loadfontgoodies[inter]
+
+\starttypescript [scientific-collection]
+  \definetypeface [scientific-collection] [rm] [serif] [stixtwo] [default]
+  \definetypeface [scientific-collection] [ss] [sans] [inter] [default] [rscale=0.8659854246]
+  \definetypeface [scientific-collection] [tt] [mono] [jetbrains-mono] [default] [rscale=0.8600002729]
+  \definetypeface [scientific-collection] [mm] [math] [stixtwo] [default]
+\stoptypescript
+
+\stoptypescriptcollection
